@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import Card from './components/Card'
 import ExpenseList from './components/ExpenseList';
@@ -14,10 +14,22 @@ function createId() {
 
 function App() {
 
-  const [expenses, setExpenses] = useState([
-    {id: createId(), title:"Food", amount: 120, category:"food"},
-    {id: createId(), title:"Jacket", amount: 30, category:"shoping"}
-  ])
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem("expenses")
+
+    if (saved) {
+      return JSON.parse(saved)
+    }
+
+    return [
+      { id: createId(), title: "Food", amount: 120, category: "food" },
+      { id: createId(), title: "Jacket", amount: 30, category: "shoping" }
+    ]
+  })
+
+  useEffect(() => {
+    localStorage.setItem("expenses", JSON.stringify(expenses))
+  }, [expenses])
 
   function handleAddExpense(data){
     const newExpence = {id:createId(), ...data}
